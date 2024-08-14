@@ -1,14 +1,10 @@
 module.exports = function toReadable(number) {
-    if (number.toString().length === 1) {
-        return oneDigitNumberToReadable(number);
+    if (number < 100) {
+        return numberLessThan100ToReadable(number);
     }
 
-    if (number.toString().length === 2) {
-        return twoDigitNumberToReadable(number);
-    }
-
-    if (number.toString().length === 3) {
-        return threeDigitNumberToReadable(number);
+    if (number >= 100) {
+        return numberGreaterThanOrEqual100ToReadable(number);
     }
 };
 
@@ -25,7 +21,7 @@ const digits = [
     "nine",
 ];
 const teens = [
-    "ten",
+    "",
     "eleven",
     "twelve",
     "thirteen",
@@ -38,7 +34,7 @@ const teens = [
 ];
 const tens = [
     "",
-    "",
+    "ten",
     "twenty",
     "thirty",
     "forty",
@@ -61,12 +57,12 @@ const hundreds = [
     "nine hundred",
 ];
 
-function oneDigitNumberToReadable(number) {
-    return digits[number];
-}
+function numberLessThan100ToReadable(number) {
+    if (number < 10) {
+        return digits[number];
+    }
 
-function twoDigitNumberToReadable(number) {
-    if (number < 20) {
+    if (number > 10 && number < 20) {
         return teens[number - 10];
     }
 
@@ -74,19 +70,19 @@ function twoDigitNumberToReadable(number) {
         return tens[number / 10];
     }
 
-    return `${tens[Math.floor(number / 10)]} ${digits[number % 10]}`;
+    const ten = Math.floor(number / 10);
+    const one = number % 10;
+
+    return `${tens[ten]} ${digits[one]}`;
 }
 
-function threeDigitNumberToReadable(number) {
+function numberGreaterThanOrEqual100ToReadable(number) {
     if (number % 100 === 0) {
         return hundreds[number / 100];
     }
 
-    if (number % 100 < 10) {
-        return `${hundreds[Math.floor(number / 100)]} ${digits[number % 100]}`;
-    }
+    const hundred = Math.floor(number / 100);
+    const remainder = number % 100;
 
-    return `${hundreds[Math.floor(number / 100)]} ${twoDigitNumberToReadable(
-        number % 100
-    )}`;
+    return `${hundreds[hundred]} ${numberLessThan100ToReadable(remainder)}`;
 }
